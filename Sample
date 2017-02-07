@@ -1,0 +1,133 @@
+
+目錄結構 :
+
+
+/Controllers	底層用的 Controller, 如登入, 選單設定等...
+
+/Views			底層用的 View, 如登入, 設定, 主選單...
+
+	/Shared		系統用的 PartialView 或是 Layout
+
+
+/Scripts		存放 MVC 預設的 javascript 檔案
+	
+
+/Content		存放系統共用的靜態檔案
+	/Css		存放系統使用的所有 *.css
+	/Images		存放系統使用的所有圖片
+	/Script     存放系統使用的 Script 檔
+	ps. 可能會有套件, 則另建目錄存放, 如 : /Content/NodeJs, /Content/AngularsJs ....
+
+/Areas                  可用於系統模組功能分群?
+	/Push			推播模組
+		/Controllers
+		/Views
+		/Models
+	/Photo		照片模組
+		/Controllers
+		/Views
+		/Models
+	/Power			權限模組
+		/Controllers
+		/Views
+		/Models
+
+===============================================================================
+檔案命名規則 :
+
+Controller 命名 :
+    以模組命名, 一個功能一個 *.cs, 如 : PushMessageController.cs, PhotoController.cs
+
+
+View 命名 :
+    直接以 Action 的名稱命名, 如 : Index.cshtml
+
+
+Partial View :
+    View 後方要加 PV, 如 : PushMessagePV.cshtml
+
+
+
+Layout 命名 :
+    後方要加上 Layout 字樣, 如 : ,MainLayout.cshtmlTopLayout.cshtml, LeftMenuLayout.cshtml
+
+
+===============================================================================
+變數命名規則 :
+
+    以 PushMessage 舉例 :
+
+    檔名 : 
+    /UI/Controllers/PushMessageController.cs
+
+
+    參數前方一律增加p_，且後方開始接大寫，以駱駝式命名, 如 :
+    public ActionResult MessageDetail(string p_MessageGuid);
+    public ActionResult ReplyMessage(string p_MessageGuid, string p_TiTle, string p_Content);
+
+
+    View, 如 :
+    /UI/Views/PrivateMessage/MessageDetail.cshtml
+    /UI/Views/PrivateMessage/ReplayMessage.cshtml    
+
+
+    如程式內有區域變數，則一律以 l_ 為開頭 ，如果為List物件後方一律+List字樣(避免與非List物件重物) 如：
+
+    public ActionResult PushMessagePV()
+    {
+       string l_Message = "這裡是亞家科技公司，你好。"; //一般區域變數
+
+       List<DEMO> l_DEMOList = new List<DEMO> ();  //List物件
+
+       DEMO l_DEMO = new DEMO(); 
+
+    }
+
+===============================================================================
+Controller 開發注意事項 :
+
+*. return 為自身的 View 時, 盡量不要標示名稱, 如 :
+    public ActionResult PushMessagePV()
+    {
+        // do some thing...
+	// return PartialView("ForumWebPartPv", forumList);     // <= 這樣不優     (本項目不一定，參閱某網站結果)
+        return PartialView(forumList);	// 使用預設值就好, 以免以後改 Class 名稱發生錯誤
+    }
+	
+===============================================================================
+ViewModel 命名規則 :
+
+ViewModel 存放於 Models 目錄之下, 並且依 Controller 的 Action 名稱命名, 
+如 :
+
+使用的 Controller
+    
+/Controllers/HomeController.cs :
+
+namespace UI.Controllers
+{
+	public class PushController
+	{
+		public ActionResult Index()
+		{
+			var model = new PushViewModel();    //非本公司Rule 只是參考用
+			return View(model)
+		}
+	}
+}
+
+
+ViewModel 應該長這樣 :
+
+Model/Models/PushViewModels.cs :
+
+namespace UI.Models.Push		     // 要加上  UI(專案名稱)/Models(資料夾名稱)/Push(模組名稱) namespace
+{    
+    public class PushViewModel()		// ViewMolel 使用 Action 命名
+    {           
+	public UserProxy.GetUserInfo_Model UserInfo { get; set; }
+		        
+        public List<MenuInfo> MenuList { get; set; }
+    }    
+}
+
